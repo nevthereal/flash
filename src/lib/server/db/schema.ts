@@ -3,44 +3,44 @@ import { text, integer, sqliteTable } from 'drizzle-orm/sqlite-core';
 
 // Folder Table (for organizing flashcard sets)
 export const folders = sqliteTable('folders', {
-	id: text('id').primaryKey(),
-	name: text('name').notNull(),
-	description: text('description'),
-	createdAt: integer('created_at', { mode: 'timestamp' }).$defaultFn(() => new Date())
+	id: text().primaryKey(),
+	name: text().notNull(),
+	description: text(),
+	createdAt: integer({ mode: 'timestamp' }).$defaultFn(() => new Date())
 });
 
 // Flashcard Set Table
 export const flashcardSets = sqliteTable('flashcard_sets', {
-	id: text('id').primaryKey(),
-	folderId: text('folder_id').references(() => folders.id),
-	title: text('title').notNull(),
-	createdAt: integer('created_at', { mode: 'timestamp' }).$defaultFn(() => new Date())
+	id: text().primaryKey(),
+	folderId: text().references(() => folders.id),
+	title: text().notNull(),
+	createdAt: integer({ mode: 'timestamp' }).$defaultFn(() => new Date())
 });
 
 // Flashcard Table
 export const flashcards = sqliteTable('flashcards', {
-	id: text('id').primaryKey(),
-	setId: text('set_id').references(() => flashcardSets.id),
-	front: text('front').notNull(),
-	back: text('back').notNull(),
-	createdAt: integer('created_at', { mode: 'timestamp' }).$defaultFn(() => new Date())
+	id: text().primaryKey(),
+	setId: text().references(() => flashcardSets.id),
+	front: text().notNull(),
+	back: text().notNull(),
+	createdAt: integer({ mode: 'timestamp' }).$defaultFn(() => new Date())
 });
 
 // Study Session Table
 export const studySessions = sqliteTable('study_sessions', {
-	id: text('id').primaryKey(),
-	setId: text('set_id').references(() => flashcardSets.id),
-	startTime: integer('start_time', { mode: 'timestamp' }).$defaultFn(() => new Date()),
-	endTime: integer('end_time', { mode: 'timestamp' }),
-	progress: text('progress', { mode: 'json' }).$type<{
+	id: text().primaryKey(),
+	setId: text().references(() => flashcardSets.id),
+	startTime: integer({ mode: 'timestamp' }).$defaultFn(() => new Date()),
+	endTime: integer({ mode: 'timestamp' }),
+	progress: text({ mode: 'json' }).$type<{
 		currentCardIndex: number;
 		cardsStudied: number;
 		correctAnswers: number;
 		incorrectAnswers: number;
 		studiedCardIds: string[];
 	}>(),
-	status: text('status', {
-		enum: ['in_progress', 'completed', 'abandoned']
+	status: text({
+		enum: ['in_progress', 'completed']
 	}).default('in_progress')
 });
 
